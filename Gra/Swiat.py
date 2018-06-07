@@ -1,4 +1,3 @@
-from tkinter import Canvas
 from Wspolrzedne import *
 from random import *
 from Zwierze import *
@@ -25,7 +24,7 @@ class Swiat:
                                        (y+1)*rozmiar_kraty, fill=kolor)
                 obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.4) * rozmiar_kraty, fill='black',
                                   font=('Helvetica', int(rozmiar_kraty // 6)), text=nazwa, width=rozmiar_kraty)
-                if self.__plansza[y][x] is not None and self.__plansza[y][x].czy_dorosly():
+                if self.__plansza[y][x] is not None and not self.__plansza[y][x].czy_dorosly():
                     obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.7) * rozmiar_kraty, fill='black',
                                       font=('Helvetica', int(rozmiar_kraty // 6)), text='dziecko', width=rozmiar_kraty)
 
@@ -36,6 +35,18 @@ class Swiat:
             for x in range(-1, 2):
                 nowe.set_xy(pozycja.get_x()+x, pozycja.get_y()+y)
                 if self.czy_punkt_nalezy(nowe) and (self.znajdz_organizm(nowe) is None or not self.znajdz_organizm(nowe).czy_zyje()):
+                    poprawne_pola.append(Wspolrzedne(nowe.get_x(), nowe.get_y()))
+        if len(poprawne_pola) != 0:
+            return poprawne_pola[randint(0, len(poprawne_pola)-1)]
+        return None
+
+    def znajdz_sasiadujace(self, pozycja):
+        nowe = Wspolrzedne(pozycja.get_x(), pozycja.get_y())
+        poprawne_pola = []
+        for y in range(-1, 2):
+            for x in range(-1, 2):
+                nowe.set_xy(pozycja.get_x()+x, pozycja.get_y()+y)
+                if self.czy_punkt_nalezy(nowe) and nowe != pozycja:
                     poprawne_pola.append(Wspolrzedne(nowe.get_x(), nowe.get_y()))
         if len(poprawne_pola) != 0:
             return poprawne_pola[randint(0, len(poprawne_pola)-1)]

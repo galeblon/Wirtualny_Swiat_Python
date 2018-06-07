@@ -9,8 +9,11 @@ class Okno:
         self.okno.title("Wirtualny Swiat - Adrian Misiak 171600")
         self.okno.minsize(800, 240)
 
+        self.okno.bind("<Key>", self.key_press)
+
         self.swiat = Swiat(10, 10)
         self.swiat.dodaj_organizm(Owca(Wspolrzedne(1, 1), self.swiat))
+        self.swiat.dodaj_organizm(Owca(Wspolrzedne(3, 3), self.swiat))
 
         self.przyciski = Frame(self.okno, width=330, background='yellow')
         self.n_gra_b = Button(self.przyciski, text="Nowa gra", command=lambda: self.new_game(), width=20)
@@ -43,6 +46,7 @@ class Okno:
 
         self.obraz = Canvas(self.okno)
         self.obraz.config(background='green')
+        self.obraz.bind("<Button-1>", self.mouse_click)
         self.komunikaty = StringVar()
         self.komunikaty.set("Komunikaty\nBarsz Sosnowskiego zjada mlecz")
         self.widok_komunikaty = Label(self.okno, textvariable=self.komunikaty, width=28, anchor=W)
@@ -66,3 +70,9 @@ class Okno:
 
     def new_turn(self):
         self.swiat.wykonaj_ture()
+
+    def key_press(self, event):
+        self.new_turn()
+
+    def mouse_click(self, event):
+        print(event.x, event.y)

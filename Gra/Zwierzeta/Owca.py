@@ -9,4 +9,4 @@ class Owca(Zwierze):
         return 'white', 'owca'
 
     def utworz_dziecko(self, polozenie):
-        pass
+        return Owca(polozenie, self.swiat)

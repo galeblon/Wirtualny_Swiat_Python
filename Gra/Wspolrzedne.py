@@ -42,5 +42,5 @@ class Wspolrzedne:
         if isinstance(other, Wspolrzedne):
             if self.__x == other.__x:
                 if self.__y == other.__y:
-                    return True
-        return False
+                    return False
+        return True
