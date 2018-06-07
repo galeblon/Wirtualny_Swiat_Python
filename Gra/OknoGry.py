@@ -1,4 +1,5 @@
 from tkinter import *
+from Swiat import *
 
 
 class Okno:
@@ -7,6 +8,7 @@ class Okno:
         self.okno = Tk()
         self.okno.title("Wirtualny Swiat - Adrian Misiak 171600")
         self.okno.minsize(800, 240)
+        self.swiat = Swiat(10, 10)
 
         self.przyciski = Frame(self.okno, width=330, background='yellow')
         self.n_gra_b = Button(self.przyciski, text="Nowa gra", command=lambda: self.new_game(), width=20)
@@ -49,10 +51,7 @@ class Okno:
 
     def rysuj(self):
         self.obraz.delete('all')
-        width = self.obraz.winfo_width()
-        height = self.obraz.winfo_height()
-        print(width)
-        self.obraz.create_rectangle(width/2, 0, width/2+20, height/2+20, fill='brown')
+        self.swiat.rysuj_swiat(self.obraz)
         self.okno.update_idletasks()
         self.okno.update()
 
