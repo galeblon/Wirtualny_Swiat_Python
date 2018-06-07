@@ -6,7 +6,7 @@ class Organizm(ABC):
         self.__sila = sila
         self.__inicjatywa = inicjatywa
         self.polozenie = start
-        self.__swiat = swiat
+        self.swiat = swiat
         self.__zyje = True
         self.__wiek = 1
 
@@ -51,4 +51,3 @@ class Organizm(ABC):
 
     def set_wiek(self, wiek):
         self.__wiek = wiek
-        

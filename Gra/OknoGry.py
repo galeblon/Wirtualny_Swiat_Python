@@ -1,6 +1,6 @@
 from tkinter import *
 from Swiat import *
-
+from Zwierzeta.Owca import *
 
 class Okno:
     def __init__(self):
@@ -8,12 +8,14 @@ class Okno:
         self.okno = Tk()
         self.okno.title("Wirtualny Swiat - Adrian Misiak 171600")
         self.okno.minsize(800, 240)
+
         self.swiat = Swiat(10, 10)
+        self.swiat.dodaj_organizm(Owca(Wspolrzedne(1, 1), self.swiat))
 
         self.przyciski = Frame(self.okno, width=330, background='yellow')
         self.n_gra_b = Button(self.przyciski, text="Nowa gra", command=lambda: self.new_game(), width=20)
         self.n_gra_b.pack(side=TOP)
-        self.n_tura_b = Button(self.przyciski, text="Nowa tura")
+        self.n_tura_b = Button(self.przyciski, text="Nowa tura", command=lambda: self.new_turn())
         self.n_tura_b.pack(side=TOP)
         self.z_gre_b = Button(self.przyciski, text="Zapisz gre")
         self.z_gre_b.pack(side=TOP)
@@ -61,3 +63,6 @@ class Okno:
     def quit_game(self):
         self.okno.destroy()
         self.running = False
+
+    def new_turn(self):
+        self.swiat.wykonaj_ture()
