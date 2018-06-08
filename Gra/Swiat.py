@@ -1,7 +1,14 @@
 from Wspolrzedne import *
 from random import *
 from Zwierze import *
-from Zwierzeta import Owca
+from Zwierzeta.Wilk import Wilk
+from Zwierzeta.Owca import Owca
+from Zwierzeta.Zolw import Zolw
+from Zwierzeta.Lis import Lis
+from Zwierzeta.Antylopa import Antylopa
+from Rosliny.Trawa import Trawa
+from Rosliny.Mlecz import Mlecz
+from Zwierzeta.Czlowiek import Czlowiek
 from shapely import geometry
 from tkinter import StringVar
 
@@ -21,7 +28,7 @@ class Swiat:
         self.__lista_pol.clear()
         for y in range(self.wysokosc):
             for x in range(self.szerokosc):
-                kolor = 'brown'
+                kolor = 'saddle brown'
                 nazwa = ''
                 if self.__plansza[y][x] is not None and self.__plansza[y][x].czy_zyje():
                     kolor, nazwa = self.__plansza[y][x].rysowanie(obraz)
@@ -31,7 +38,9 @@ class Swiat:
                 obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.4) * rozmiar_kraty, fill='black',
                                   font=('Helvetica', int(rozmiar_kraty // 6)),
                                   text=nazwa, width=rozmiar_kraty)
-                if self.__plansza[y][x] is not None and not self.__plansza[y][x].czy_dorosly() \
+                if self.__plansza[y][x] is not None \
+                        and isinstance(self.__plansza[y][x], Zwierze) is True \
+                        and not self.__plansza[y][x].czy_dorosly() \
                         and self.__plansza[y][x].czy_zyje():
                     obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.7) * rozmiar_kraty, fill='black',
                                       font=('Helvetica', int(rozmiar_kraty // 6)), text='dziecko', width=rozmiar_kraty)
@@ -133,7 +142,6 @@ class Swiat:
             self.__lista_organizmow.append(organizm)
             if isinstance(organizm, Zwierze):
                 self.__lista_organizmow.sort(key=lambda x: (x.get_inicjatywa(), x.get_wiek()), reverse=True)
-            self.dodaj_komunikat("Narodzil sie nowy organizm!\n" + str(organizm.polozenie))
 
     def wprowadz_organizm(self, x, y, gatunek, obraz):
         for pole in self.__lista_pol:
@@ -146,12 +154,12 @@ class Swiat:
                 polozenie = Wspolrzedne(tab_x+1, tab_y+1)
                 if self.znajdz_organizm(polozenie) is None or not self.znajdz_organizm(polozenie).czy_zyje():
                     # TODO
-                    self.dodaj_organizm(Owca.Owca(polozenie, self))
-                    self.dodaj_komunikat("Dodano nowy organizm" + str(polozenie))
+                    self.dodaj_organizm(Owca(polozenie, self))
+                    self.dodaj_komunikat("Dodano nowy organizm\n" + str(polozenie))
                 elif self.znajdz_organizm(polozenie) is not None:
                     self.znajdz_organizm(polozenie).umrzyj()
                     if not self.znajdz_organizm(polozenie).czy_zyje():
-                        self.dodaj_komunikat("Usunieto organizm" + str(polozenie))
+                        self.dodaj_komunikat("Usunieto organizm\n" + str(polozenie))
 
     def dodaj_komunikat(self, wiadomosc):
         self.__lista_komunikatow.append(wiadomosc)
@@ -172,5 +180,18 @@ class Swiat:
 
     def zapisz_polecenie(self, polecenie):
         self.polecenie = polecenie
+
+    def stworz_losowy(self, polozenie):
+        organizmy = {
+            1: Owca,
+            2: Wilk,
+            3: Zolw,
+            4: Lis,
+            5: Antylopa,
+            6: Trawa,
+            7: Mlecz,
+        }
+        do_stworzenia = organizmy[randint(1, 7)]
+        return do_stworzenia(polozenie, self)
 
 

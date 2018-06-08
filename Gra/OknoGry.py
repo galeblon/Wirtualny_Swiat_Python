@@ -11,12 +11,13 @@ sys.setrecursionlimit(10000)
 
 class Okno:
     def __init__(self):
-        #self.running = True
+        # self.running = True
         self.okno = Tk()
         self.okno.title("Wirtualny Swiat - Adrian Misiak 171600")
         self.okno.minsize(800, 240)
 
         self.okno.bind("<Key>", self.key_press)
+        self.okno.bind("<Configure>", self.aktualizuj)
 
         self.swiat = Swiat(10, 10)
         self.swiat.dodaj_organizm(Owca(Wspolrzedne(1, 1), self.swiat))
@@ -57,8 +58,8 @@ class Okno:
         self.obraz.config(background='green')
         self.obraz.bind("<Button-1>", self.mouse_click)
         self.komunikaty = StringVar()
-        self.komunikaty.set("Komunikaty\nBarsz Sosnowskiego zjada mlecz")
-        self.widok_komunikaty = Label(self.okno, textvariable=self.komunikaty, width=28, anchor=W)
+        self.komunikaty.set("Komunikaty:")
+        self.widok_komunikaty = Label(self.okno, textvariable=self.komunikaty, width=28, anchor=NW, height=10)
 
         self.przyciski.pack(side=RIGHT, fill='y', expand=False)
         self.widok_komunikaty.pack(side=LEFT, fill='y', expand=False)
@@ -76,16 +77,27 @@ class Okno:
         populacja = simpledialog.askinteger("Populacja", "Podaj % zapelnienia:", parent=self.okno)
         if wysokosc > 0 and szerokosc > 0 and 0 <= populacja <= 100:
             self.swiat = Swiat(wysokosc, szerokosc)
-            self.swiat.dodaj_organizm(Owca(Wspolrzedne(1, 1), self.swiat))
-            self.swiat.dodaj_organizm(Owca(Wspolrzedne(3, 3), self.swiat))
-            self.swiat.dodaj_organizm(Wilk(Wspolrzedne(8, 8), self.swiat))
-            self.swiat.dodaj_organizm(Czlowiek(Wspolrzedne(5, 5), self.swiat))
+            startowe = Wspolrzedne(randint(1, szerokosc), randint(1, wysokosc))
+            self.swiat.dodaj_organizm(Czlowiek(startowe, self.swiat))
+            licznik_stworzen = 1
+            proba = 0
+            liczba_organizmow = int(wysokosc*szerokosc*populacja/100)
+            max_prob = liczba_organizmow*liczba_organizmow
+            while proba < max_prob:
+                if licznik_stworzen > liczba_organizmow:
+                    proba = max_prob
+                startowe = Wspolrzedne(randint(1, szerokosc), randint(1, wysokosc))
+                if self.swiat.znajdz_organizm(startowe) is None:
+                    self.swiat.dodaj_organizm(self.swiat.stworz_losowy(startowe))
+                    licznik_stworzen += 1
+                proba += 1
+            self.rysuj()
         else:
             messagebox.showerror("Blad", "Podano bledne dane")
 
     def quit_game(self):
         self.okno.destroy()
-        #self.running = False
+        # self.running = False
 
     def new_turn(self):
         self.swiat.wykonaj_ture()
@@ -98,4 +110,8 @@ class Okno:
 
     def mouse_click(self, event):
         self.swiat.wprowadz_organizm(event.x, event.y, 'owca', self.obraz)
+        self.swiat.wypisz_komunikaty(self.komunikaty)
+        self.rysuj()
+
+    def aktualizuj(self, event):
         self.rysuj()

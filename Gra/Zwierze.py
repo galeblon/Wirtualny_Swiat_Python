@@ -33,12 +33,11 @@ class Zwierze(Organizm):
                 if self.get_sila() > atakujacy.get_sila():
                     atakujacy.umrzyj()
                     if not atakujacy.czy_zyje():
-                        self.swiat.dodaj_komunikat(self.nazwa() + ' zabija\n' + atakujacy.nazwa())
+                        self.swiat.dodaj_komunikat(self.nazwa() + ' zabija ' + atakujacy.nazwa())
                 else:
                     self.umrzyj()
                     if not self.czy_zyje():
-                        self.swiat.dodaj_komunikat(atakujacy.nazwa() + ' zabija\n' + self.nazwa())
-        pass
+                        self.swiat.dodaj_komunikat(atakujacy.nazwa() + ' zabija ' + self.nazwa())
 
     def czy_dorosly(self):
         return self.get_wiek() > 5

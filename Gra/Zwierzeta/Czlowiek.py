@@ -63,7 +63,7 @@ class Czlowiek(Zwierze):
             self.polozenie = nowe
 
     def dane_do_zapisu(self):
-        zapis = super(Zwierze, self).dane_do_zapisu()
+        zapis = super().dane_do_zapisu()
         zapis += ";" + str(self.umiejetnosc_aktywna) + ";" + str(self.licznik_umiejetnosci)
         return zapis
 

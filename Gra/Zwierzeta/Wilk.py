@@ -9,6 +9,7 @@ class Wilk(Zwierze):
         return 'grey', 'willk'
 
     def utworz_dziecko(self, polozenie):
+        self.swiat.dodaj_komunikat("Narodzil sie nowy wilk!\n" + str(self.polozenie))
         return Wilk(polozenie, self.swiat)
 
     def nazwa(self):

@@ -9,6 +9,7 @@ class Owca(Zwierze):
         return 'white', 'owca'
 
     def utworz_dziecko(self, polozenie):
+        self.swiat.dodaj_komunikat("Narodzila sie nowa owca!\n" + str(self.polozenie))
         return Owca(polozenie, self.swiat)
 
     def nazwa(self):
