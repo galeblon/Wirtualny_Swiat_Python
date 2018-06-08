@@ -10,3 +10,6 @@ class Owca(Zwierze):
 
     def utworz_dziecko(self, polozenie):
         return Owca(polozenie, self.swiat)
+
+    def nazwa(self):
+        return 'owca'

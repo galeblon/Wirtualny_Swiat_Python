@@ -1,6 +1,10 @@
 from Wspolrzedne import *
 from random import *
 from Zwierze import *
+from Zwierzeta import Owca
+from tkinter import Canvas
+from shapely import geometry
+from tkinter import StringVar
 
 class Swiat:
     def __init__(self, wysokosc, szerokosc):
@@ -20,11 +24,12 @@ class Swiat:
                 nazwa = ''
                 if self.__plansza[y][x] is not None and self.__plansza[y][x].czy_zyje():
                     kolor, nazwa = self.__plansza[y][x].rysowanie(obraz)
-                obraz.create_rectangle(x*rozmiar_kraty, y*rozmiar_kraty, (x+1)*rozmiar_kraty,
-                                       (y+1)*rozmiar_kraty, fill=kolor)
+                self.__lista_pol.append(obraz.create_rectangle(x*rozmiar_kraty, y*rozmiar_kraty, (x+1)*rozmiar_kraty,
+                                       (y+1)*rozmiar_kraty, fill=kolor))
                 obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.4) * rozmiar_kraty, fill='black',
                                   font=('Helvetica', int(rozmiar_kraty // 6)), text=nazwa, width=rozmiar_kraty)
-                if self.__plansza[y][x] is not None and not self.__plansza[y][x].czy_dorosly():
+                if self.__plansza[y][x] is not None and not self.__plansza[y][x].czy_dorosly() \
+                        and self.__plansza[y][x].czy_zyje():
                     obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.7) * rozmiar_kraty, fill='black',
                                       font=('Helvetica', int(rozmiar_kraty // 6)), text='dziecko', width=rozmiar_kraty)
 
@@ -83,11 +88,42 @@ class Swiat:
         self.__plansza[nowe.get_y() - 1][nowe.get_x() - 1] = organizm
 
     def dodaj_organizm(self, organizm):
-        if(organizm is not None):
+        if organizm is not None:
             self.__plansza[organizm.polozenie.get_y()-1][organizm.polozenie.get_x()-1] = organizm
             self.__lista_organizmow.append(organizm)
             if isinstance(organizm, Zwierze):
                 self.__lista_organizmow.sort(key=lambda x: (x.get_inicjatywa(), x.get_wiek()), reverse=True)
+            self.dodaj_komunikat("Narodzil sie nowy organizm!\n" + str(organizm.polozenie))
+
+    def wprowadz_organizm(self, x, y, gatunek, obraz):
+        for pole in self.__lista_pol:
+            x1, y1, x2, y2 = obraz.coords(pole)
+            poly = geometry.Polygon([(x1, y1), (x2, y1), (x2, y2), (x1, y2)])
+            if poly.contains(geometry.Point(x, y)):
+                tab_x = self.__lista_pol.index(pole)
+                tab_y = int(tab_x // self.szerokosc)
+                tab_x = int(tab_x % self.szerokosc)
+                polozenie = Wspolrzedne(tab_x+1, tab_y+1)
+                if self.znajdz_organizm(polozenie) is None or not self.znajdz_organizm(polozenie).czy_zyje():
+                    # TODO
+                    self.dodaj_organizm(Owca.Owca(polozenie, self))
+                    self.dodaj_komunikat("Dodano nowy organizm" + str(polozenie))
+                elif self.znajdz_organizm(polozenie) is not None:
+                    self.znajdz_organizm(polozenie).umrzyj()
+                    if not self.znajdz_organizm(polozenie).czy_zyje():
+                        self.dodaj_komunikat("Usunieto organizm" + str(polozenie))
+
+    def dodaj_komunikat(self, wiadomosc):
+        self.__lista_komunikatow.append(wiadomosc)
+
+    def wypisz_komunikaty(self, komunikaty):
+        if isinstance(komunikaty, StringVar):
+            i = 1
+            text = "Komunikaty:\n"
+            for komunikat in self.__lista_komunikatow:
+                text += str(i) + ". " + komunikat + "\n"
+                i += 1
+            komunikaty.set(text)
 
 
 

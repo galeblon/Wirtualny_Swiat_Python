@@ -32,8 +32,12 @@ class Zwierze(Organizm):
             else:
                 if self.get_sila() > atakujacy.get_sila():
                     atakujacy.umrzyj()
+                    if not atakujacy.czy_zyje():
+                        self.swiat.dodaj_komunikat(self.nazwa() + ' zabija\n' + atakujacy.nazwa())
                 else:
                     self.umrzyj()
+                    if not self.czy_zyje():
+                        self.swiat.dodaj_komunikat(atakujacy.nazwa() + ' zabija\n' + self.nazwa())
         pass
 
     def czy_dorosly(self):
@@ -47,4 +51,7 @@ class Zwierze(Organizm):
             self.plodny = self.plodny + 1
         elif wskaz is False:
             self.plodny = -5
+
+    def nazwa(self):
+        return 'Zwierze'
 
