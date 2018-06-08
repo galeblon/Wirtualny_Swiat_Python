@@ -1,11 +1,17 @@
 from tkinter import *
+from tkinter import simpledialog
+from tkinter import messagebox
 from Swiat import *
 from Zwierzeta.Owca import *
 from Zwierzeta.Wilk import *
+from Zwierzeta.Czlowiek import *
+import sys
+sys.setrecursionlimit(10000)
+
 
 class Okno:
     def __init__(self):
-        self.running = True
+        #self.running = True
         self.okno = Tk()
         self.okno.title("Wirtualny Swiat - Adrian Misiak 171600")
         self.okno.minsize(800, 240)
@@ -16,6 +22,7 @@ class Okno:
         self.swiat.dodaj_organizm(Owca(Wspolrzedne(1, 1), self.swiat))
         self.swiat.dodaj_organizm(Owca(Wspolrzedne(3, 3), self.swiat))
         self.swiat.dodaj_organizm(Wilk(Wspolrzedne(8, 8), self.swiat))
+        self.swiat.dodaj_organizm(Czlowiek(Wspolrzedne(5, 5), self.swiat))
 
         self.przyciski = Frame(self.okno, width=330, background='yellow')
         self.n_gra_b = Button(self.przyciski, text="Nowa gra", command=lambda: self.new_game(), width=20)
@@ -64,18 +71,31 @@ class Okno:
         self.okno.update()
 
     def new_game(self):
-        print("New game!")
+        wysokosc = simpledialog.askinteger("Wysokosc", "Podaj wysokosc:", parent=self.okno)
+        szerokosc = simpledialog.askinteger("Szerokosc", "Podaj szerokosc:", parent=self.okno)
+        populacja = simpledialog.askinteger("Populacja", "Podaj % zapelnienia:", parent=self.okno)
+        if wysokosc > 0 and szerokosc > 0 and 0 <= populacja <= 100:
+            self.swiat = Swiat(wysokosc, szerokosc)
+            self.swiat.dodaj_organizm(Owca(Wspolrzedne(1, 1), self.swiat))
+            self.swiat.dodaj_organizm(Owca(Wspolrzedne(3, 3), self.swiat))
+            self.swiat.dodaj_organizm(Wilk(Wspolrzedne(8, 8), self.swiat))
+            self.swiat.dodaj_organizm(Czlowiek(Wspolrzedne(5, 5), self.swiat))
+        else:
+            messagebox.showerror("Blad", "Podano bledne dane")
 
     def quit_game(self):
         self.okno.destroy()
-        self.running = False
+        #self.running = False
 
     def new_turn(self):
         self.swiat.wykonaj_ture()
         self.swiat.wypisz_komunikaty(self.komunikaty)
+        self.rysuj()
 
     def key_press(self, event):
+        self.swiat.zapisz_polecenie(str(event.keysym))
         self.new_turn()
 
     def mouse_click(self, event):
         self.swiat.wprowadz_organizm(event.x, event.y, 'owca', self.obraz)
+        self.rysuj()

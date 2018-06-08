@@ -2,14 +2,15 @@ from Wspolrzedne import *
 from random import *
 from Zwierze import *
 from Zwierzeta import Owca
-from tkinter import Canvas
 from shapely import geometry
 from tkinter import StringVar
+
 
 class Swiat:
     def __init__(self, wysokosc, szerokosc):
         self.wysokosc = wysokosc
         self.szerokosc = szerokosc
+        self.polecenie = None
         self.__lista_organizmow = []
         self.__lista_komunikatow = []
         self.__lista_pol = []
@@ -24,10 +25,12 @@ class Swiat:
                 nazwa = ''
                 if self.__plansza[y][x] is not None and self.__plansza[y][x].czy_zyje():
                     kolor, nazwa = self.__plansza[y][x].rysowanie(obraz)
+                    nazwa = str(self.__lista_organizmow.index(self.__plansza[y][x])) + nazwa
                 self.__lista_pol.append(obraz.create_rectangle(x*rozmiar_kraty, y*rozmiar_kraty, (x+1)*rozmiar_kraty,
                                        (y+1)*rozmiar_kraty, fill=kolor))
                 obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.4) * rozmiar_kraty, fill='black',
-                                  font=('Helvetica', int(rozmiar_kraty // 6)), text=nazwa, width=rozmiar_kraty)
+                                  font=('Helvetica', int(rozmiar_kraty // 6)),
+                                  text=nazwa, width=rozmiar_kraty)
                 if self.__plansza[y][x] is not None and not self.__plansza[y][x].czy_dorosly() \
                         and self.__plansza[y][x].czy_zyje():
                     obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.7) * rozmiar_kraty, fill='black',
@@ -55,6 +58,43 @@ class Swiat:
                     poprawne_pola.append(Wspolrzedne(nowe.get_x(), nowe.get_y()))
         if len(poprawne_pola) != 0:
             return poprawne_pola[randint(0, len(poprawne_pola)-1)]
+        return None
+
+    def znajdz_sasiadujace_pola(self, pozycja):
+        nowe = Wspolrzedne(pozycja.get_x(), pozycja.get_y())
+        poprawne_pola = []
+        for y in range(-1, 2):
+            for x in range(-1, 2):
+                nowe.set_xy(pozycja.get_x() + x, pozycja.get_y() + y)
+                if self.czy_punkt_nalezy(nowe) and nowe != pozycja:
+                    poprawne_pola.append(Wspolrzedne(nowe.get_x(), nowe.get_y()))
+        if len(poprawne_pola) != 0:
+            return poprawne_pola
+        return None
+
+    def znajdz_sasiadujace_klawisz(self, pozycja, kierunek):
+        ruchy = {
+            "Up": (0, -1),
+            "Down": (0, 1),
+            "Left": (-1, 0),
+            "Right": (1, 0),
+            "w": (0, -1),
+            "s": (0, 1),
+            "a": (-1, 0),
+            "d": (1, 0),
+            "e": (1, -1),
+            "q": (-1, -1),
+            "z": (-1, 1),
+            "c": (1, 1),
+        }
+        try:
+            x, y = ruchy[kierunek]
+        except KeyError as e:
+            x = 0
+            y = 0
+        nowe = Wspolrzedne(pozycja.get_x()+x, pozycja.get_y()+y)
+        if self.czy_punkt_nalezy(nowe) and nowe != pozycja:
+            return nowe
         return None
 
     def czy_punkt_nalezy(self, punkt):
@@ -125,5 +165,12 @@ class Swiat:
                 i += 1
             komunikaty.set(text)
 
+    def wydaj_polecenie(self):
+        tmp = self.polecenie
+        self.polecenie = None
+        return tmp
+
+    def zapisz_polecenie(self, polecenie):
+        self.polecenie = polecenie
 
 

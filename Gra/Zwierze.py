@@ -55,3 +55,8 @@ class Zwierze(Organizm):
     def nazwa(self):
         return 'Zwierze'
 
+    def dane_do_zapisu(self):
+        zapis = super(Organizm, self).dane_do_zapisu()
+        zapis += ";" + str(self.plodny)
+        return zapis
+
