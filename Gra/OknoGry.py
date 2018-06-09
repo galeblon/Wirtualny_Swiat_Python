@@ -2,7 +2,9 @@ from tkinter import *
 from tkinter import simpledialog
 from tkinter import messagebox
 from tkinter import filedialog
-from Swiat import *
+from Zwierzeta.Czlowiek import Czlowiek
+from SwiatGrid import *
+from SwiatHex import *
 import sys
 sys.setrecursionlimit(10000)
 
@@ -18,7 +20,7 @@ class Okno:
         self.okno.bind("<Key>", self.key_press)
         self.okno.bind("<Configure>", self.aktualizuj)
 
-        self.swiat = Swiat(10, 10)
+        self.swiat = SwiatGrid(10, 10)
 
         self.przyciski = Frame(self.okno, width=330, background='yellow')
         self.n_gra_b = Button(self.przyciski, text="Nowa gra", command=lambda: self.new_game(), width=20)
@@ -44,7 +46,7 @@ class Okno:
         self.prawo_b.pack(side=BOTTOM)
         self.spawn_lista.pack(side=TOP,)
 
-        self.grid_b = Button(self.przyciski, text="Grid")
+        self.grid_b = Button(self.przyciski, text="Grid", command=lambda: self.toggle_tryb_gry())
         self.grid_b.pack(side=TOP)
         self.wyjdz_b = Button(self.przyciski, text="Wyjdz", command=lambda: self.quit_game())
         self.wyjdz_b.pack(side=TOP)
@@ -71,7 +73,10 @@ class Okno:
         szerokosc = simpledialog.askinteger("Szerokosc", "Podaj szerokosc:", parent=self.okno)
         populacja = simpledialog.askinteger("Populacja", "Podaj % zapelnienia:", parent=self.okno)
         if wysokosc > 0 and szerokosc > 0 and 0 <= populacja <= 100:
-            self.swiat = Swiat(wysokosc, szerokosc)
+            if self.grid_b['text'] == 'Grid':
+                self.swiat = SwiatGrid(wysokosc, szerokosc)
+            else:
+                self.swiat = SwiatHex(wysokosc, szerokosc)
             startowe = Wspolrzedne(randint(1, szerokosc), randint(1, wysokosc))
             self.swiat.dodaj_organizm(Czlowiek(startowe, self.swiat))
             licznik_stworzen = 1
@@ -149,7 +154,10 @@ class Okno:
         if plik.readable():
             szerokosc = int(plik.readline())
             wysokosc = int(plik.readline())
-            nowy_swiat = Swiat(wysokosc, szerokosc)
+            if self.grid_b['text'] == 'Grid':
+                nowy_swiat = SwiatGrid(wysokosc, szerokosc)
+            else:
+                nowy_swiat = SwiatHex(wysokosc, szerokosc)
             if nowy_swiat.wczytaj_organizmy(plik) is True:
                 self.swiat = nowy_swiat
                 self.rysuj()
@@ -158,3 +166,9 @@ class Okno:
         else:
             messagebox.showerror("Blad odczytu", "Odczyt stanu gry sie nie powiodl.")
         plik.close()
+
+    def toggle_tryb_gry(self):
+        if self.grid_b['text'] == 'Grid':
+            self.grid_b['text'] = 'Hex'
+        else:
+            self.grid_b['text'] = 'Grid'

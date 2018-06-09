@@ -7,7 +7,7 @@ class CyberOwca(Owca):
         self.set_sila(11)
 
     def rysowanie(self, okno):
-        return 'light slate gray', 'cyber-owca'
+        return 'plum1', 'cyber-owca'
 
     def utworz_dziecko(self, polozenie):
         self.swiat.dodaj_komunikat("Narodzila sie nowa owca!\n" + str(self.polozenie))
