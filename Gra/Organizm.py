@@ -51,3 +51,6 @@ class Organizm(ABC):
 
     def set_wiek(self, wiek):
         self.__wiek = wiek
+
+    def set_sila(self, val):
+        self.__sila = val

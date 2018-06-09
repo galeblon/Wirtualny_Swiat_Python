@@ -59,3 +59,5 @@ class Zwierze(Organizm):
         zapis += ";" + str(self.plodny)
         return zapis
 
+    def zwieksz_sile(self, val):
+        super().set_sila(self.get_sila() + val)

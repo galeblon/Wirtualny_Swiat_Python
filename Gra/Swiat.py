@@ -8,6 +8,9 @@ from Zwierzeta.Lis import Lis
 from Zwierzeta.Antylopa import Antylopa
 from Rosliny.Trawa import Trawa
 from Rosliny.Mlecz import Mlecz
+from Rosliny.Guarana import Guarana
+from Rosliny.WilczeJagody import WilczeJagody
+from Rosliny.BarszczSosnowskiego import BarszczSosnowskiego
 from Zwierzeta.Czlowiek import Czlowiek
 from shapely import geometry
 from tkinter import StringVar
@@ -35,10 +38,12 @@ class Swiat:
                     nazwa = str(self.__lista_organizmow.index(self.__plansza[y][x])) + nazwa
                 self.__lista_pol.append(obraz.create_rectangle(x*rozmiar_kraty, y*rozmiar_kraty, (x+1)*rozmiar_kraty,
                                        (y+1)*rozmiar_kraty, fill=kolor))
-                obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.4) * rozmiar_kraty, fill='black',
-                                  font=('Helvetica', int(rozmiar_kraty // 6)),
-                                  text=nazwa, width=rozmiar_kraty)
+                if int(rozmiar_kraty // 6) > 1:
+                    obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.4) * rozmiar_kraty, fill='black',
+                                      font=('Helvetica', int(rozmiar_kraty // 6)),
+                                      text=nazwa, width=rozmiar_kraty)
                 if self.__plansza[y][x] is not None \
+                        and int(rozmiar_kraty // 6) > 1 \
                         and isinstance(self.__plansza[y][x], Zwierze) is True \
                         and not self.__plansza[y][x].czy_dorosly() \
                         and self.__plansza[y][x].czy_zyje():
@@ -98,7 +103,7 @@ class Swiat:
         }
         try:
             x, y = ruchy[kierunek]
-        except KeyError as e:
+        except KeyError:
             x = 0
             y = 0
         nowe = Wspolrzedne(pozycja.get_x()+x, pozycja.get_y()+y)
@@ -190,8 +195,11 @@ class Swiat:
             5: Antylopa,
             6: Trawa,
             7: Mlecz,
+            8: Guarana,
+            9: WilczeJagody,
+            10: BarszczSosnowskiego,
         }
-        do_stworzenia = organizmy[randint(1, 7)]
+        do_stworzenia = organizmy[randint(1, 10)]
         return do_stworzenia(polozenie, self)
 
 
