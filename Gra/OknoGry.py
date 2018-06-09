@@ -1,17 +1,16 @@
 from tkinter import *
 from tkinter import simpledialog
 from tkinter import messagebox
+from tkinter import filedialog
 from Swiat import *
-from Zwierzeta.Owca import *
-from Zwierzeta.Wilk import *
-from Zwierzeta.Czlowiek import *
 import sys
 sys.setrecursionlimit(10000)
 
 
 class Okno:
+    index_wyboru = 11
+
     def __init__(self):
-        # self.running = True
         self.okno = Tk()
         self.okno.title("Wirtualny Swiat - Adrian Misiak 171600")
         self.okno.minsize(800, 240)
@@ -20,19 +19,15 @@ class Okno:
         self.okno.bind("<Configure>", self.aktualizuj)
 
         self.swiat = Swiat(10, 10)
-        self.swiat.dodaj_organizm(Owca(Wspolrzedne(1, 1), self.swiat))
-        self.swiat.dodaj_organizm(Owca(Wspolrzedne(3, 3), self.swiat))
-        self.swiat.dodaj_organizm(Wilk(Wspolrzedne(8, 8), self.swiat))
-        self.swiat.dodaj_organizm(Czlowiek(Wspolrzedne(5, 5), self.swiat))
 
         self.przyciski = Frame(self.okno, width=330, background='yellow')
         self.n_gra_b = Button(self.przyciski, text="Nowa gra", command=lambda: self.new_game(), width=20)
         self.n_gra_b.pack(side=TOP)
         self.n_tura_b = Button(self.przyciski, text="Nowa tura", command=lambda: self.new_turn())
         self.n_tura_b.pack(side=TOP)
-        self.z_gre_b = Button(self.przyciski, text="Zapisz gre")
+        self.z_gre_b = Button(self.przyciski, text="Zapisz gre", command=lambda: self.save_game())
         self.z_gre_b.pack(side=TOP)
-        self.w_gre_b = Button(self.przyciski, text="Wczytaj gre")
+        self.w_gre_b = Button(self.przyciski, text="Wczytaj gre", command=lambda: self.load_game())
         self.w_gre_b.pack(side=TOP)
 
         self.wybrany_spawn_str = StringVar()
@@ -41,11 +36,11 @@ class Okno:
         self.spawn_lista = Frame(self.przyciski, width=200)
         self.spawn_lista.config(background="red")
 
-        self.lewo_b = Button(self.spawn_lista, text="←")
+        self.lewo_b = Button(self.spawn_lista, text="←", command=lambda: self.zmien_wybrany(-1))
         self.lewo_b.pack(side=BOTTOM)
         self.wybrany_spawn = Label(self.spawn_lista, textvariable=self.wybrany_spawn_str)
         self.wybrany_spawn.pack(side=TOP)
-        self.prawo_b = Button(self.spawn_lista, text="→")
+        self.prawo_b = Button(self.spawn_lista, text="→", command=lambda: self.zmien_wybrany(1))
         self.prawo_b.pack(side=BOTTOM)
         self.spawn_lista.pack(side=TOP,)
 
@@ -97,7 +92,6 @@ class Okno:
 
     def quit_game(self):
         self.okno.destroy()
-        # self.running = False
 
     def new_turn(self):
         self.swiat.wykonaj_ture()
@@ -109,9 +103,41 @@ class Okno:
         self.new_turn()
 
     def mouse_click(self, event):
-        self.swiat.wprowadz_organizm(event.x, event.y, 'owca', self.obraz)
+        self.swiat.wprowadz_organizm(event.x, event.y, self.wybrany_spawn_str.get(), self.obraz)
         self.swiat.wypisz_komunikaty(self.komunikaty)
         self.rysuj()
 
     def aktualizuj(self, event):
         self.rysuj()
+
+    def zmien_wybrany(self, val):
+        self.index_wyboru += val
+        if self.index_wyboru < 0:
+            self.index_wyboru = 11
+        if self.index_wyboru > 11:
+            self.index_wyboru = self.index_wyboru % 12
+        wybory = {
+            0: 'CyberOwca',
+            1: 'Owca',
+            2: 'Wilk',
+            3: 'Zolw',
+            4: 'Lis',
+            5: 'Antylopa',
+            6: 'Trawa',
+            7: 'Mlecz',
+            8: 'Guarana',
+            9: 'WilczeJagody',
+            10: 'BarszczSosnowskiego',
+            11: 'Czlowiek',
+        }
+        self.wybrany_spawn_str.set(wybory[self.index_wyboru])
+
+    def save_game(self):
+        nazwa_pliku = filedialog.asksaveasfilename(parent=self.okno, title="Gdzie zapisac gre:")
+        plik = open(nazwa_pliku, 'w+')
+        # plik.write('ayy\n')
+        print(nazwa_pliku)
+        pass
+
+    def load_game(self):
+        pass

@@ -16,7 +16,7 @@ class Lis(Zwierze):
         return 'lis'
 
     def akcja(self):
-        if self.get_wiek() < 1:
+        if self.get_wiek() <= 1:
             return
         polozenie_temp = self.swiat.znajdz_sasiadujace(self.polozenie)
         if polozenie_temp is not None:
@@ -30,7 +30,9 @@ class Lis(Zwierze):
                     if polozenie_temp is not None:
                         self.swiat.aktualizuj_mape(self.polozenie, polozenie_temp)
                         self.polozenie = polozenie_temp
-            if self.czy_zyje() and (self.swiat.znajdz_organizm(polozenie_temp) is None or not self.swiat.znajdz_organizm(polozenie_temp).czy_zyje()):
+            if polozenie_temp is not None and self.czy_zyje() \
+                    and (self.swiat.znajdz_organizm(polozenie_temp) is None
+                         or not self.swiat.znajdz_organizm(polozenie_temp).czy_zyje()):
                 self.swiat.aktualizuj_mape(self.polozenie, polozenie_temp)
                 self.polozenie = polozenie_temp
 

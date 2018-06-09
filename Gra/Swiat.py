@@ -40,15 +40,15 @@ class Swiat:
                                        (y+1)*rozmiar_kraty, fill=kolor))
                 if int(rozmiar_kraty // 6) > 1:
                     obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.4) * rozmiar_kraty, fill='black',
-                                      font=('Helvetica', int(rozmiar_kraty // 6)),
+                                      font=('Helvetica', int(rozmiar_kraty // 7)),
                                       text=nazwa, width=rozmiar_kraty)
                 if self.__plansza[y][x] is not None \
-                        and int(rozmiar_kraty // 6) > 1 \
+                        and int(rozmiar_kraty // 7) > 1 \
                         and isinstance(self.__plansza[y][x], Zwierze) is True \
                         and not self.__plansza[y][x].czy_dorosly() \
                         and self.__plansza[y][x].czy_zyje():
                     obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.7) * rozmiar_kraty, fill='black',
-                                      font=('Helvetica', int(rozmiar_kraty // 6)), text='dziecko', width=rozmiar_kraty)
+                                      font=('Helvetica', int(rozmiar_kraty // 7)), text='dziecko', width=rozmiar_kraty)
 
     def znajdz_wolne_sasiadujace(self, pozycja):
         nowe = Wspolrzedne(pozycja.get_x(), pozycja.get_y())
@@ -56,7 +56,8 @@ class Swiat:
         for y in range(-1, 2):
             for x in range(-1, 2):
                 nowe.set_xy(pozycja.get_x()+x, pozycja.get_y()+y)
-                if self.czy_punkt_nalezy(nowe) and (self.znajdz_organizm(nowe) is None or not self.znajdz_organizm(nowe).czy_zyje()):
+                if self.czy_punkt_nalezy(nowe) and (self.znajdz_organizm(nowe) is None
+                                                    or not self.znajdz_organizm(nowe).czy_zyje()):
                     poprawne_pola.append(Wspolrzedne(nowe.get_x(), nowe.get_y()))
         if len(poprawne_pola) != 0:
             return poprawne_pola[randint(0, len(poprawne_pola)-1)]
@@ -158,13 +159,38 @@ class Swiat:
                 tab_x = int(tab_x % self.szerokosc)
                 polozenie = Wspolrzedne(tab_x+1, tab_y+1)
                 if self.znajdz_organizm(polozenie) is None or not self.znajdz_organizm(polozenie).czy_zyje():
-                    # TODO
-                    self.dodaj_organizm(Owca(polozenie, self))
-                    self.dodaj_komunikat("Dodano nowy organizm\n" + str(polozenie))
+                    organizm_do_dodania = self.stworz_organizm(gatunek, polozenie)
+                    if organizm_do_dodania is not None:
+                        self.dodaj_organizm(organizm_do_dodania)
+                        self.dodaj_komunikat("Dodano nowy organizm\n" + str(polozenie))
+                    else:
+                        self.dodaj_komunikat("Czlowiek juz istnieje!")
                 elif self.znajdz_organizm(polozenie) is not None:
                     self.znajdz_organizm(polozenie).umrzyj()
-                    if not self.znajdz_organizm(polozenie).czy_zyje():
+                    if self.znajdz_organizm(polozenie) is not None and not self.znajdz_organizm(polozenie).czy_zyje():
                         self.dodaj_komunikat("Usunieto organizm\n" + str(polozenie))
+
+    def stworz_organizm(self, gatunek, polozenie):
+        organizmy = {
+            'CyberOwca': None,
+            'Owca': Owca,
+            'Wilk': Wilk,
+            'Zolw': Zolw,
+            'Lis': Lis,
+            'Antylopa': Antylopa,
+            'Trawa': Trawa,
+            'Mlecz': Mlecz,
+            'Guarana': Guarana,
+            'WilczeJagody': WilczeJagody,
+            'BarszczSosnowskiego':BarszczSosnowskiego,
+            'Czlowiek': Czlowiek,
+        }
+        organizm = organizmy[gatunek]
+        if organizm is Czlowiek and not any(x.nazwa() == 'czlowiek' and x.czy_zyje()  for x in self.__lista_organizmow):
+            return organizm(polozenie, self)
+        if organizm is not Czlowiek:
+            return organizm(polozenie, self)
+        return None
 
     def dodaj_komunikat(self, wiadomosc):
         self.__lista_komunikatow.append(wiadomosc)

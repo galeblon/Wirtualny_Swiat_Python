@@ -9,7 +9,7 @@ class Zolw(Zwierze):
         super(Zwierze, self).__init__(2, 1, start, swiat)
 
     def rysowanie(self, okno):
-        return 'dark olive green', 'zolw'
+        return 'dark green', 'zolw'
 
     def utworz_dziecko(self, polozenie):
         self.swiat.dodaj_komunikat("Narodzil sie nowy zolw!\n" + str(self.polozenie))
@@ -19,7 +19,7 @@ class Zolw(Zwierze):
         return 'zolw'
 
     def akcja(self):
-        if self.get_wiek() < 1:
+        if self.get_wiek() <= 1:
             return
         if randint(0, 100) <= 75:
             return

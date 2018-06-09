@@ -10,7 +10,7 @@ class Zwierze(Organizm):
         super(Organizm, self).__init__(sila, inicjatywa, start, swiat)
 
     def akcja(self):
-        if self.get_wiek() < 1:
+        if self.get_wiek() <= 1:
             return
         polozenie_temp = self.swiat.znajdz_sasiadujace(self.polozenie)
         if polozenie_temp is not None:
