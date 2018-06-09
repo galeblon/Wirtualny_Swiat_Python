@@ -22,7 +22,8 @@ class Zwierze(Organizm):
 
     def kolizja(self, atakujacy):
         if isinstance(atakujacy, Zwierze):
-            if type(atakujacy) is type(self):
+            if type(atakujacy) is type(self) or issubclass(type(atakujacy), type(self)) \
+                    or issubclass(type(self), type(atakujacy)):
                 if self.czy_dorosly() and self.czy_plodny() and atakujacy.czy_plodny() and atakujacy.czy_dorosly():
                     wolne = self.swiat.znajdz_wolne_sasiadujace(self.polozenie)
                     if wolne is not None:
@@ -55,9 +56,12 @@ class Zwierze(Organizm):
         return 'Zwierze'
 
     def dane_do_zapisu(self):
-        zapis = super(Organizm, self).dane_do_zapisu()
+        zapis = super().dane_do_zapisu()
         zapis += ";" + str(self.plodny)
         return zapis
 
     def zwieksz_sile(self, val):
         super().set_sila(self.get_sila() + val)
+
+    def set_plodnosc(self, val):
+        self.plodny = val

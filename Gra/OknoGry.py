@@ -135,9 +135,26 @@ class Okno:
     def save_game(self):
         nazwa_pliku = filedialog.asksaveasfilename(parent=self.okno, title="Gdzie zapisac gre:")
         plik = open(nazwa_pliku, 'w+')
-        # plik.write('ayy\n')
-        print(nazwa_pliku)
-        pass
+        if plik.writable():
+            plik.write(str(self.swiat.szerokosc) + '\n')
+            plik.write(str(self.swiat.wysokosc) + '\n')
+            self.swiat.zapisz_organizmy(plik)
+        else:
+            messagebox.showerror("Blad zapisu", "Zapis stanu gry sie nie powiodl.")
+        plik.close()
 
     def load_game(self):
-        pass
+        nazwa_pliku = filedialog.askopenfilename(parent=self.okno, title="Zkad wczytac gre:")
+        plik = open(nazwa_pliku, 'r+')
+        if plik.readable():
+            szerokosc = int(plik.readline())
+            wysokosc = int(plik.readline())
+            nowy_swiat = Swiat(wysokosc, szerokosc)
+            if nowy_swiat.wczytaj_organizmy(plik) is True:
+                self.swiat = nowy_swiat
+                self.rysuj()
+            else:
+                messagebox.showerror("Blad odczytu", "Plik z zapisem jest niepoprawny.")
+        else:
+            messagebox.showerror("Blad odczytu", "Odczyt stanu gry sie nie powiodl.")
+        plik.close()

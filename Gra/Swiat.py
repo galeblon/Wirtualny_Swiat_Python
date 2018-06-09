@@ -6,6 +6,7 @@ from Zwierzeta.Owca import Owca
 from Zwierzeta.Zolw import Zolw
 from Zwierzeta.Lis import Lis
 from Zwierzeta.Antylopa import Antylopa
+from Zwierzeta.CyberOwca import CyberOwca
 from Rosliny.Trawa import Trawa
 from Rosliny.Mlecz import Mlecz
 from Rosliny.Guarana import Guarana
@@ -37,7 +38,7 @@ class Swiat:
                     kolor, nazwa = self.__plansza[y][x].rysowanie(obraz)
                     nazwa = str(self.__lista_organizmow.index(self.__plansza[y][x])) + nazwa
                 self.__lista_pol.append(obraz.create_rectangle(x*rozmiar_kraty, y*rozmiar_kraty, (x+1)*rozmiar_kraty,
-                                       (y+1)*rozmiar_kraty, fill=kolor))
+                                        (y+1)*rozmiar_kraty, fill=kolor))
                 if int(rozmiar_kraty // 6) > 1:
                     obraz.create_text((x + 0.5) * rozmiar_kraty, (y + 0.4) * rozmiar_kraty, fill='black',
                                       font=('Helvetica', int(rozmiar_kraty // 7)),
@@ -171,21 +172,7 @@ class Swiat:
                         self.dodaj_komunikat("Usunieto organizm\n" + str(polozenie))
 
     def stworz_organizm(self, gatunek, polozenie):
-        organizmy = {
-            'CyberOwca': None,
-            'Owca': Owca,
-            'Wilk': Wilk,
-            'Zolw': Zolw,
-            'Lis': Lis,
-            'Antylopa': Antylopa,
-            'Trawa': Trawa,
-            'Mlecz': Mlecz,
-            'Guarana': Guarana,
-            'WilczeJagody': WilczeJagody,
-            'BarszczSosnowskiego':BarszczSosnowskiego,
-            'Czlowiek': Czlowiek,
-        }
-        organizm = organizmy[gatunek]
+        organizm = self.mapuj_gatunek(gatunek)
         if organizm is Czlowiek and not any(x.nazwa() == 'czlowiek' and x.czy_zyje()  for x in self.__lista_organizmow):
             return organizm(polozenie, self)
         if organizm is not Czlowiek:
@@ -224,8 +211,57 @@ class Swiat:
             8: Guarana,
             9: WilczeJagody,
             10: BarszczSosnowskiego,
+            11: CyberOwca,
         }
-        do_stworzenia = organizmy[randint(1, 10)]
+        do_stworzenia = organizmy[randint(1, 11)]
         return do_stworzenia(polozenie, self)
 
+    def zapisz_organizmy(self, plik):
+        for organizm in self.__lista_organizmow:
+            if organizm.czy_zyje():
+                plik.write(organizm.__class__.__name__ + ';')
+                plik.write(organizm.dane_do_zapisu() + '\n')
 
+    def wczytaj_organizmy(self, plik):
+        for l in plik:
+            argumenty = l.split(';')
+            try:
+                organizm = self.mapuj_gatunek(argumenty[0])
+            except KeyError:
+                return False
+            try:
+                lokacja = Wspolrzedne(int(argumenty[3]), int(argumenty[4]))
+                if self.znajdz_organizm(lokacja) is not None:
+                    return False
+                stworzenie = organizm(lokacja, self)
+                stworzenie.set_sila(int(argumenty[1]))
+                stworzenie.set_wiek(int(argumenty[5]))
+                if issubclass(organizm, Zwierze):
+                    stworzenie.set_plodnosc(int(argumenty[6]))
+                if organizm is Czlowiek:
+                    stworzenie.set_aktywna_umiejetnosc(bool(argumenty[7]))
+                    stworzenie.set_licznik(int(argumenty[8]))
+                self.dodaj_organizm(stworzenie)
+            except IndexError:
+                return False
+            except ValueError:
+                return False
+        return True
+
+    @staticmethod
+    def mapuj_gatunek(gatunek):
+        organizmy = {
+            'CyberOwca': CyberOwca,
+            'Owca': Owca,
+            'Wilk': Wilk,
+            'Zolw': Zolw,
+            'Lis': Lis,
+            'Antylopa': Antylopa,
+            'Trawa': Trawa,
+            'Mlecz': Mlecz,
+            'Guarana': Guarana,
+            'WilczeJagody': WilczeJagody,
+            'BarszczSosnowskiego': BarszczSosnowskiego,
+            'Czlowiek': Czlowiek,
+        }
+        return organizmy[gatunek]

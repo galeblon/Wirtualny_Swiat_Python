@@ -46,7 +46,9 @@ class Organizm(ABC):
 
     def dane_do_zapisu(self):
         zapis = ''
-        zapis = zapis + self.__sila + ';' + self.__inicjatywa + ';' + self.polozenie.get_x() + ';' + self.polozenie.get_y() + ';' + self.__wiek
+        zapis += '{0};{1};{2};{3};{4}'.format(self.__sila, self.__inicjatywa,
+                                              self.polozenie.get_x(), self.polozenie.get_y(),
+                                              self.__wiek)
         return zapis
 
     def set_wiek(self, wiek):
