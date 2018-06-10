@@ -22,11 +22,9 @@ class Okno:
 
         self.swiat = SwiatGrid(10, 10)
 
-        self.przyciski = Frame(self.okno, width=330, background='yellow')
-        self.n_gra_b = Button(self.przyciski, text="Nowa gra", command=lambda: self.new_game(), width=20)
-        self.n_gra_b.pack(side=TOP)
-        self.n_tura_b = Button(self.przyciski, text="Nowa tura", command=lambda: self.new_turn())
-        self.n_tura_b.pack(side=TOP)
+        self.przyciski = Frame(self.okno)
+        Button(self.przyciski, text="Nowa gra", command=lambda: self.new_game()).pack(side=TOP)
+        Button(self.przyciski, text="Nowa tura", command=lambda: self.new_turn()).pack(side=TOP)
         self.z_gre_b = Button(self.przyciski, text="Zapisz gre", command=lambda: self.save_game())
         self.z_gre_b.pack(side=TOP)
         self.w_gre_b = Button(self.przyciski, text="Wczytaj gre", command=lambda: self.load_game())
@@ -35,12 +33,11 @@ class Okno:
         self.wybrany_spawn_str = StringVar()
         self.wybrany_spawn_str.set("Czlowiek")
 
-        self.spawn_lista = Frame(self.przyciski, width=200)
-        self.spawn_lista.config(background="red")
+        self.spawn_lista = Frame(self.przyciski)
 
         self.lewo_b = Button(self.spawn_lista, text="←", command=lambda: self.zmien_wybrany(-1))
         self.lewo_b.pack(side=BOTTOM)
-        self.wybrany_spawn = Label(self.spawn_lista, textvariable=self.wybrany_spawn_str)
+        self.wybrany_spawn = Label(self.spawn_lista, textvariable=self.wybrany_spawn_str, width=30)
         self.wybrany_spawn.pack(side=TOP)
         self.prawo_b = Button(self.spawn_lista, text="→", command=lambda: self.zmien_wybrany(1))
         self.prawo_b.pack(side=BOTTOM)
@@ -52,11 +49,11 @@ class Okno:
         self.wyjdz_b.pack(side=TOP)
 
         self.obraz = Canvas(self.okno)
-        self.obraz.config(background='green')
         self.obraz.bind("<Button-1>", self.mouse_click)
         self.komunikaty = StringVar()
         self.komunikaty.set("Komunikaty:")
-        self.widok_komunikaty = Label(self.okno, textvariable=self.komunikaty, width=28, anchor=NW, height=10)
+        self.widok_komunikaty = Label(self.okno, textvariable=self.komunikaty, width=28,
+                                      anchor=NW, height=10, justify=LEFT)
 
         self.przyciski.pack(side=RIGHT, fill='y', expand=False)
         self.widok_komunikaty.pack(side=LEFT, fill='y', expand=False)
