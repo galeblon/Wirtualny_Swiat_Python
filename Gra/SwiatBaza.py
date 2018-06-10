@@ -79,7 +79,7 @@ class SwiatBaza(ABC):
     def aktualizuj_mape(self, stare, nowe):
         organizm = self.znajdz_organizm(stare)
         self._plansza[stare.get_y()-1][stare.get_x()-1] = None
-        self._plansza[nowe.get_y() - 1][nowe.get_x() - 1] = organizm
+        self._plansza[nowe.get_y()-1][nowe.get_x()-1] = organizm
 
     def dodaj_organizm(self, organizm):
         if organizm is not None:

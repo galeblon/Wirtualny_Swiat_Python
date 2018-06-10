@@ -52,23 +52,44 @@ class SwiatHex(SwiatBaza):
     def znajdz_wolne_sasiadujace(self, pozycja):
         nowe = Wspolrzedne(pozycja.get_x(), pozycja.get_y())
         poprawne_pola = []
+        for y in range(-2, 3):
+            if y != 0:
+                nowe.set_xy(pozycja.get_x(), pozycja.get_y() + y)
+                if self.czy_punkt_nalezy(nowe) \
+                        and (self.znajdz_organizm(nowe) is None
+                             or not self.znajdz_organizm(nowe).czy_zyje()):
+                    poprawne_pola.append(Wspolrzedne(nowe.get_x(), nowe.get_y()))
+        if pozycja.get_y() % 2 == 0:
+            x = -1
+        else:
+            x = 1
         for y in range(-1, 2):
-            for x in range(-1, 2):
-                nowe.set_xy(pozycja.get_x()+x, pozycja.get_y()+y)
-                if self.czy_punkt_nalezy(nowe) and (self.znajdz_organizm(nowe) is None
-                                                    or not self.znajdz_organizm(nowe).czy_zyje()):
+            if y != 0:
+                nowe.set_xy(pozycja.get_x() + x, pozycja.get_y() + y)
+                if self.czy_punkt_nalezy(nowe) \
+                        and (self.znajdz_organizm(nowe) is None
+                             or not self.znajdz_organizm(nowe).czy_zyje()):
                     poprawne_pola.append(Wspolrzedne(nowe.get_x(), nowe.get_y()))
         if len(poprawne_pola) != 0:
-            return poprawne_pola[randint(0, len(poprawne_pola)-1)]
+            return poprawne_pola[randint(0, len(poprawne_pola) - 1)]
         return None
 
     def znajdz_sasiadujace(self, pozycja):
         nowe = Wspolrzedne(pozycja.get_x(), pozycja.get_y())
         poprawne_pola = []
+        for y in range(-2, 3):
+            if y != 0:
+                nowe.set_xy(pozycja.get_x(), pozycja.get_y()+y)
+                if self.czy_punkt_nalezy(nowe):
+                    poprawne_pola.append(Wspolrzedne(nowe.get_x(), nowe.get_y()))
+        if pozycja.get_y() % 2 == 0:
+            x = -1
+        else:
+            x = 1
         for y in range(-1, 2):
-            for x in range(-1, 2):
+            if y != 0:
                 nowe.set_xy(pozycja.get_x()+x, pozycja.get_y()+y)
-                if self.czy_punkt_nalezy(nowe) and nowe != pozycja:
+                if self.czy_punkt_nalezy(nowe):
                     poprawne_pola.append(Wspolrzedne(nowe.get_x(), nowe.get_y()))
         if len(poprawne_pola) != 0:
             return poprawne_pola[randint(0, len(poprawne_pola)-1)]
@@ -77,10 +98,19 @@ class SwiatHex(SwiatBaza):
     def znajdz_sasiadujace_pola(self, pozycja):
         nowe = Wspolrzedne(pozycja.get_x(), pozycja.get_y())
         poprawne_pola = []
+        for y in range(-2, 3):
+            if y != 0:
+                nowe.set_xy(pozycja.get_x(), pozycja.get_y() + y)
+                if self.czy_punkt_nalezy(nowe):
+                    poprawne_pola.append(Wspolrzedne(nowe.get_x(), nowe.get_y()))
+        if pozycja.get_y() % 2 == 0:
+            x = -1
+        else:
+            x = 1
         for y in range(-1, 2):
-            for x in range(-1, 2):
+            if y != 0:
                 nowe.set_xy(pozycja.get_x() + x, pozycja.get_y() + y)
-                if self.czy_punkt_nalezy(nowe) and nowe != pozycja:
+                if self.czy_punkt_nalezy(nowe):
                     poprawne_pola.append(Wspolrzedne(nowe.get_x(), nowe.get_y()))
         if len(poprawne_pola) != 0:
             return poprawne_pola
@@ -88,18 +118,14 @@ class SwiatHex(SwiatBaza):
 
     def znajdz_sasiadujace_klawisz(self, pozycja, kierunek):
         ruchy = {
-            "Up": (0, -1),
-            "Down": (0, 1),
-            "Left": (-1, 0),
-            "Right": (1, 0),
-            "w": (0, -1),
-            "s": (0, 1),
-            "a": (-1, 0),
-            "d": (1, 0),
-            "e": (1, -1),
-            "q": (-1, -1),
-            "z": (-1, 1),
-            "c": (1, 1),
+            "Up": (0, -2),
+            "Down": (0, 2),
+            "w": (0, -2),
+            "x": (0, 2),
+            "e": (pozycja.get_y() % 2, -1),
+            "q": (-(pozycja.get_y() % 2 == 0), -1),
+            "z": (-(pozycja.get_y() % 2 == 0), 1),
+            "c": (pozycja.get_y() % 2, 1),
         }
         try:
             x, y = ruchy[kierunek]

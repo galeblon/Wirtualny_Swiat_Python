@@ -49,7 +49,7 @@ class Czlowiek(Zwierze):
             self.umiejetnosc_aktywna = True
             self.swiat.dodaj_komunikat("Aktywowano niesmiertelnosc\nna 5 tur.")
 
-    def umrzyj(self):
+    def umrzyj(self, powod=None):
         if not self.umiejetnosc_aktywna:
             super(Zwierze, self).umrzyj()
         else:

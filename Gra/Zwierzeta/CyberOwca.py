@@ -1,5 +1,5 @@
 from Zwierzeta.Owca import Owca
-
+from Rosliny.BarszczSosnowskiego import BarszczSosnowskiego
 
 class CyberOwca(Owca):
     def __init__(self, start, swiat):
@@ -21,3 +21,8 @@ class CyberOwca(Owca):
 
     def kolizja(self, atakujacy):
         super().kolizja(atakujacy)
+
+    def umrzyj(self, powod=None):
+        if isinstance(powod, BarszczSosnowskiego):
+            return
+        super().umrzyj(powod)

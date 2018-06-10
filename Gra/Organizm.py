@@ -32,7 +32,7 @@ class Organizm(ABC):
     def postarzej(self):
         self.__wiek = self.__wiek + 1
 
-    def umrzyj(self):
+    def umrzyj(self, powod=None):
         self.__zyje = False
 
     def get_inicjatywa(self):

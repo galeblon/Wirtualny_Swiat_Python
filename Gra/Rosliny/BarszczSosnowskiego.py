@@ -20,6 +20,7 @@ class BarszczSosnowskiego(Roslina):
         for sasiad_punkt in sasiadujace:
             sasiad = self.swiat.znajdz_organizm(sasiad_punkt)
             if sasiad is not None and isinstance(sasiad, Zwierze) and sasiad.czy_zyje():
-                sasiad.umrzyj()
-                self.swiat.dodaj_komunikat("Barszcz parzy " + sasiad.nazwa() + "\n" + str(sasiad_punkt))
+                sasiad.umrzyj(self)
+                if not sasiad.czy_zyje():
+                    self.swiat.dodaj_komunikat("Barszcz parzy " + sasiad.nazwa() + "\n" + str(sasiad_punkt))
         super().akcja()
