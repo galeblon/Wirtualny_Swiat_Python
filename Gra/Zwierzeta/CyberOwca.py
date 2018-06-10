@@ -13,8 +13,7 @@ class CyberOwca(Owca):
         return 'plum1', 'cyber-owca'
 
     def utworz_dziecko(self, polozenie):
-        self.swiat.dodaj_komunikat("Narodzila sie nowa owca!\n" + str(self.polozenie))
-        return Owca(polozenie, self.swiat)
+        return None
 
     def nazwa(self):
         return 'cyber-owca'
@@ -37,6 +36,9 @@ class CyberOwca(Owca):
                         polozenie_temp).czy_zyje()):
                     self.swiat.aktualizuj_mape(self.polozenie, polozenie_temp)
                     self.polozenie = polozenie_temp
+                else:
+                    self.sciezka.clear()
+                    self.cel = None
         else:
             super().akcja()
 
@@ -60,23 +62,28 @@ class CyberOwca(Owca):
         plansza[self.polozenie.get_y()-1][self.polozenie.get_x()-1]['kolor'] = 'g'
         plansza[self.polozenie.get_y()-1][self.polozenie.get_x()-1]['dystans'] = 0
         while len(pola) != 0:
-            pole = pola.pop()
+            pole = pola.pop(0)
             for sasiad in self.swiat.znajdz_sasiadujace_pola(pole):
                 if self.swiat.znajdz_organizm(sasiad) is None \
                         or not self.swiat.znajdz_organizm(sasiad).czy_zyje() \
                         or self.swiat.znajdz_organizm(sasiad).get_sila() <= self.get_sila():
-                    if plansza[sasiad.get_y()-1][sasiad.get_x()-1]['kolor'] == 'w':
-                        plansza[sasiad.get_y()-1][sasiad.get_x()-1]['kolor'] = 'g'
-                        pola.append(sasiad)
                     if plansza[sasiad.get_y()-1][sasiad.get_x()-1]['dystans'] == 'inf'\
                        or plansza[sasiad.get_y() - 1][sasiad.get_x() - 1]['dystans'] > \
                             plansza[pole.get_y() - 1][pole.get_x() - 1]['dystans'] + 1:
                         plansza[sasiad.get_y() - 1][sasiad.get_x() - 1]['dystans'] = \
                             plansza[pole.get_y() - 1][pole.get_x() - 1]['dystans'] + 1
                         plansza[sasiad.get_y() - 1][sasiad.get_x() - 1]['prev'] = pole
-                    if isinstance(self.swiat.znajdz_organizm(sasiad), BarszczSosnowskiego):
+                    if plansza[sasiad.get_y()-1][sasiad.get_x()-1]['kolor'] == 'w':
+                        plansza[sasiad.get_y()-1][sasiad.get_x()-1]['kolor'] = 'g'
+                        if self.cel is None or plansza[sasiad.get_y() - 1][sasiad.get_x() - 1]['dystans'] < \
+                                plansza[self.cel.get_y() - 1][self.cel.get_x() - 1]['dystans']:
+                            pola.append(sasiad)
+                        else:
+                            plansza[sasiad.get_y() - 1][sasiad.get_x() - 1]['kolor'] = 'b'
+                    if isinstance(self.swiat.znajdz_organizm(sasiad), BarszczSosnowskiego) \
+                            and (self.cel is None or plansza[sasiad.get_y() - 1][sasiad.get_x() - 1]['dystans'] <
+                                 plansza[self.cel.get_y() - 1][self.cel.get_x() - 1]['dystans']):
                         self.cel = sasiad
-                        break
             plansza[pole.get_y()-1][pole.get_x()-1]['kolor'] = 'b'
         tmp = self.cel
         if tmp is None:

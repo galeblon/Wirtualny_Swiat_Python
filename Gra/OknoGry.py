@@ -23,30 +23,24 @@ class Okno:
         self.swiat = SwiatGrid(10, 10)
 
         self.przyciski = Frame(self.okno)
-        Button(self.przyciski, text="Nowa gra", command=lambda: self.new_game()).pack(side=TOP)
-        Button(self.przyciski, text="Nowa tura", command=lambda: self.new_turn()).pack(side=TOP)
-        self.z_gre_b = Button(self.przyciski, text="Zapisz gre", command=lambda: self.save_game())
-        self.z_gre_b.pack(side=TOP)
-        self.w_gre_b = Button(self.przyciski, text="Wczytaj gre", command=lambda: self.load_game())
-        self.w_gre_b.pack(side=TOP)
+        Button(self.przyciski, text="Nowa gra", width=12, command=lambda: self.new_game()).pack(side=TOP)
+        Button(self.przyciski, text="Nowa tura", width=12, command=lambda: self.new_turn()).pack(side=TOP)
+        Button(self.przyciski, text="Zapisz gre", width=12, command=lambda: self.save_game()).pack(side=TOP)
+        Button(self.przyciski, text="Wczytaj gre", width=12, command=lambda: self.load_game()).pack(side=TOP)
 
         self.wybrany_spawn_str = StringVar()
         self.wybrany_spawn_str.set("Czlowiek")
 
         self.spawn_lista = Frame(self.przyciski)
 
-        self.lewo_b = Button(self.spawn_lista, text="←", command=lambda: self.zmien_wybrany(-1))
-        self.lewo_b.pack(side=BOTTOM)
-        self.wybrany_spawn = Label(self.spawn_lista, textvariable=self.wybrany_spawn_str, width=30)
-        self.wybrany_spawn.pack(side=TOP)
-        self.prawo_b = Button(self.spawn_lista, text="→", command=lambda: self.zmien_wybrany(1))
-        self.prawo_b.pack(side=BOTTOM)
-        self.spawn_lista.pack(side=TOP,)
+        Button(self.spawn_lista, text="←", command=lambda: self.zmien_wybrany(-1)).pack(side=LEFT)
+        Label(self.spawn_lista, textvariable=self.wybrany_spawn_str, width=16).pack(side=LEFT)
+        Button(self.spawn_lista, text="→", command=lambda: self.zmien_wybrany(1)).pack(side=RIGHT)
+        self.spawn_lista.pack(side=TOP)
 
-        self.grid_b = Button(self.przyciski, text="Grid", command=lambda: self.toggle_tryb_gry())
+        self.grid_b = Button(self.przyciski, text="Grid", width=12, command=lambda: self.toggle_tryb_gry())
         self.grid_b.pack(side=TOP)
-        self.wyjdz_b = Button(self.przyciski, text="Wyjdz", command=lambda: self.quit_game())
-        self.wyjdz_b.pack(side=TOP)
+        Button(self.przyciski, text="Wyjdz", width=12, command=lambda: self.quit_game()).pack(side=TOP)
 
         self.obraz = Canvas(self.okno)
         self.obraz.bind("<Button-1>", self.mouse_click)
@@ -136,6 +130,8 @@ class Okno:
 
     def save_game(self):
         nazwa_pliku = filedialog.asksaveasfilename(parent=self.okno, title="Gdzie zapisac gre:")
+        if len(nazwa_pliku) == 0:
+            return
         plik = open(nazwa_pliku, 'w+')
         if plik.writable():
             plik.write(str(self.swiat.szerokosc) + '\n')
@@ -147,6 +143,8 @@ class Okno:
 
     def load_game(self):
         nazwa_pliku = filedialog.askopenfilename(parent=self.okno, title="Zkad wczytac gre:")
+        if len(nazwa_pliku) == 0:
+            return
         plik = open(nazwa_pliku, 'r+')
         if plik.readable():
             szerokosc = int(plik.readline())
