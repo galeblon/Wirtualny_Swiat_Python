@@ -21,7 +21,7 @@ class CyberOwca(Owca):
     def akcja(self):
         self.szukaj_barszczu()
         if len(self.sciezka) > 0:
-            polozenie_temp = self.sciezka.pop(1)
+            polozenie_temp = self.sciezka.pop(0)
             if polozenie_temp is not None:
                 if self.swiat.znajdz_organizm(polozenie_temp) is not None \
                    and self.swiat.znajdz_organizm(polozenie_temp).czy_zyje() \
@@ -51,6 +51,8 @@ class CyberOwca(Owca):
         super().umrzyj(powod)
 
     def szukaj_barszczu(self, reset=False):
+        if not self.swiat.istnieje_barszcz():
+            return
         if self.cel is not None and isinstance(self.swiat.znajdz_organizm(self.cel), BarszczSosnowskiego) \
            and self.swiat.znajdz_organizm(self.cel).czy_zyje() and reset is False:
             return
@@ -91,5 +93,4 @@ class CyberOwca(Owca):
         while plansza[tmp.get_y()-1][tmp.get_x()-1]['prev'] is not None:
             self.sciezka.append(tmp)
             tmp = plansza[tmp.get_y()-1][tmp.get_x()-1]['prev']
-        self.sciezka.append(tmp)
         self.sciezka.reverse()

@@ -182,3 +182,9 @@ class SwiatBaza(ABC):
             'Czlowiek': Czlowiek,
         }
         return organizmy[gatunek]
+
+    def istnieje_barszcz(self):
+        for organizm in self._lista_organizmow:
+            if isinstance(organizm, BarszczSosnowskiego):
+                return True
+        return False
